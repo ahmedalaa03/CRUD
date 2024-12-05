@@ -69,9 +69,33 @@
               <option value="za">Z-A</option>
             </select>
           </div>
+          <div class="mb-3">
+            <div class="form-label">Filter by Category:</div>
+            <div id="categoryFilter" class="d-flex flex-wrap">
+              <div class="form-check me-3">
+                <input class="form-check-input category-checkbox" type="checkbox" value="TV" id="categoryTV">
+                <label class="form-check-label" for="categoryTV">TV</label>
+              </div>
+              <div class="form-check me-3">
+                <input class="form-check-input category-checkbox" type="checkbox" value="Phone" id="categoryPhone">
+                <label class="form-check-label" for="categoryPhone">Phone</label>
+              </div>
+              <div class="form-check me-3">
+                <input class="form-check-input category-checkbox" type="checkbox" value="Screen" id="categoryScreen">
+                <label class="form-check-label" for="categoryScreen">Screen</label>
+              </div>
+              <div class="form-check me-3">
+                <input class="form-check-input category-checkbox" type="checkbox" value="Laptop" id="categoryLaptop">
+                <label class="form-check-label" for="categoryLaptop">Laptop</label>
+              </div>
+              <div class="form-check me-3">
+                <input class="form-check-input category-checkbox" type="checkbox" value="Electronics" id="categoryElectronics">
+                <label class="form-check-label" for="categoryElectronics">Electronics</label>
+              </div>
+            </div>
+          </div>
           <div class="d-flex flex-column align-items-center">
             <div class="form-label">Filter by Price:</div>
-            <div class="space">         Min                       Max             </div>
             <div class="d-flex align-items-center w-100">
               <span id="minPriceLabel">6000</span>
               <input disabled type="range" class="form-range mx-2 priceSlider" id="minPrice" min="6000" max="60000" step="500" value="6000">

@@ -31,12 +31,12 @@ function addProduct() {
         }
         productList.push(product);
         localStorage.setItem('products', JSON.stringify(productList));
-        sortProducts(productList);
+        sortProducts(filteredProducts());
         clearForm();
         removeValidationClasses();
         document.getElementById('imagePreview').style.display = 'none';
         if (productList.length > 1) { document.getElementById('sortProducts').removeAttribute('disabled'); }
-        if (productList.length) { document.querySelectorAll('.priceSlider').forEach(slider=>{slider.removeAttribute('disabled');})}
+        if (productList.length) { document.querySelectorAll('.priceSlider').forEach(slider => { slider.removeAttribute('disabled'); }) }
       }
       reader.readAsDataURL(productImageFile);
     }
@@ -84,10 +84,10 @@ function displayProducts(list = productList) {
 function deleteProduct(deleteIndex) {
   productList = productList.filter((product) => product.customValue !== deleteIndex);
   localStorage.setItem('products', JSON.stringify(productList));
-  sortProducts(productList);
+  sortProducts(filteredProducts());
   if (!productList.length) { document.getElementById('displayProduct').innerHTML = '<p class="text-center text-primary">No products to display!</p>'; }
   if (productList.length < 2) { document.getElementById('sortProducts').setAttribute('disabled', 'true'); }
-  if (productList.length) { document.querySelectorAll('.priceSlider').forEach(slider=>{slider.setAttribute('disabled', 'true');})}
+  if (productList.length) { document.querySelectorAll('.priceSlider').forEach(slider => { slider.setAttribute('disabled', 'true'); }) }
 }
 let updateIndex;
 function editProduct(editedIndex) {
@@ -125,35 +125,17 @@ function updateProduct() {
         addBtn.classList.remove('d-none');
         updateBtn.classList.add('d-none');
         removeValidationClasses();
-        if (searchInput.value.trim() == '') { sortProducts(productList); }
+        if (searchInput.value.trim() == '') { sortProducts(filteredProducts()); }
         else { searchProductByName(searchInput.value); }
 
       };
-      window.scrollTo(0, 500);
       reader.readAsDataURL(productImageFile);
     }
   }
 }
-function searchProductByName(keyword) {
-  let matchedSearch = [];
-  let regex = new RegExp(`(${keyword})`, 'gi');
-  for (let product of productList) {
-    if (product.name.toLowerCase().includes(keyword.toLowerCase())) {
-      let productClone = { ...product };
-      productClone.nameHighlighted = productClone.name.replace(regex, `<span class="text-danger">$1</span>`);
-      matchedSearch.push(productClone);
-    }
-  }
-  if (keyword.trim() == '') {
-    sortProducts(productList);
-  } else if (matchedSearch.length == 0) {
-    document.getElementById('displayProduct').innerHTML = '<p class="text-center text-danger">No products found!</p>';
-  } else {
-    sortProducts(matchedSearch);
-  }
-}
+
 document.getElementById('sortProducts').addEventListener('change', function () { sortProducts(); })
-function sortProducts(list = productList) {
+function sortProducts(list = filteredProducts()) {
   const sortOption = document.getElementById('sortProducts').value;
   if (sortOption === 'old') {
     list.sort((a, b) => a.customValue - b.customValue);
@@ -177,7 +159,7 @@ function sortProducts(list = productList) {
 }
 window.addEventListener('load', function () {
   if (productList.length > 1) { document.getElementById('sortProducts').removeAttribute('disabled'); }
-  if (productList.length) { document.querySelectorAll('.priceSlider').forEach(slider=>{slider.removeAttribute('disabled');})}
+  if (productList.length) { document.querySelectorAll('.priceSlider').forEach(slider => { slider.removeAttribute('disabled'); }) }
 })
 productNameInput.addEventListener('input', function () { validate(this); validateAllInputs(); });
 productPriceInput.addEventListener('input', function () { validate(this); validateAllInputs(); });
@@ -263,6 +245,38 @@ productImageInput.addEventListener('change', function () {
     document.getElementById('imagePreview').style.display = 'none';
   }
 });
+function filteredProducts() {
+  let filtered = productList;
+  if (selectedCategories.length) {
+    filtered = filtered.filter(product => selectedCategories.includes(product.category));
+  }
+  const minPrice = parseInt(minPriceSlider.value);
+  const maxPrice = parseInt(maxPriceSlider.value);
+  filtered = filtered.filter(product => {
+    const price = parseInt(product.price);
+    return price >= minPrice && price <= maxPrice;
+  });
+  return filtered;
+}
+function searchProductByName(keyword) {
+  let matchedSearch = [];
+  let regex = new RegExp(`(${keyword})`, 'gi');
+  filteredProducts().forEach(product => {
+    if (product.name.toLowerCase().includes(keyword.toLowerCase())) {
+      let productClone = { ...product };
+      productClone.nameHighlighted = productClone.name.replace(regex, `<span class="text-danger">$1</span>`);
+      matchedSearch.push(productClone);
+    }
+  });
+  if (keyword.trim() === '') {
+    sortProducts(filteredProducts());
+  } else if (matchedSearch.length === 0) {
+    document.getElementById('displayProduct').innerHTML = '<p class="text-center text-danger">No products found!</p>';
+  } else {
+    sortProducts(matchedSearch);
+  }
+}
+let selectedPriceProducts = [];
 const minPriceSlider = document.getElementById('minPrice');
 const maxPriceSlider = document.getElementById('maxPrice');
 minPriceSlider.addEventListener('input', updatePriceFilter);
@@ -277,10 +291,42 @@ function updatePriceFilter() {
   }
   document.getElementById('minPriceLabel').innerHTML = minPrice;
   document.getElementById('maxPriceLabel').innerHTML = maxPrice;
-  productList = JSON.parse(localStorage.getItem('products')).filter(product => {
-    const price = parseInt(product.price);
-    return price >= minPrice && price <= maxPrice;
-  });
-  sortProducts(productList);
-  if (!productList.length) { document.getElementById('displayProduct').innerHTML = '<p class="text-center text-danger">No products in this range!</p>'; }
+  if (selectedCategories.length) {
+    selectedPriceProducts = selectedCategoryProducts.filter(product => {
+      const price = parseInt(product.price);
+      return price >= minPrice && price <= maxPrice;
+    });
+  }
+  else {
+    selectedPriceProducts = productList.filter(product => {
+      const price = parseInt(product.price);
+      return price >= minPrice && price <= maxPrice;
+    });
+  }
+  sortProducts(selectedPriceProducts);
+  if (!selectedPriceProducts.length) { document.getElementById('displayProduct').innerHTML = '<p class="text-center text-danger">No products in this range!</p>'; }
+}
+let selectedCategoryProducts = [];
+let selectedCategories = [];
+const categoryCheckboxes = document.querySelectorAll('.category-checkbox');
+categoryCheckboxes.forEach(checkbox => { checkbox.addEventListener('change', filterByCategory); });
+function filterByCategory() {
+  selectedCategories = Array.from(categoryCheckboxes).filter(checkbox => checkbox.checked).map(checkbox => checkbox.value);
+  if (selectedCategories.length) {
+    selectedCategoryProducts = productList.filter(product => {
+      const matchesCategory = selectedCategories.includes(product.category);
+      const price = parseInt(product.price);
+      const isPriceInRange = price >= minPriceSlider.value && price <= maxPriceSlider.value;
+      return matchesCategory && isPriceInRange;
+    });
+  } else {
+    selectedCategoryProducts = productList.filter(product => {
+      const price = parseInt(product.price);
+      return price >= minPriceSlider.value && price <= maxPriceSlider.value;
+    });
+  }
+  sortProducts(selectedCategoryProducts);
+  if (!selectedCategoryProducts.length) {
+    document.getElementById('displayProduct').innerHTML = '<p class="text-center text-danger">No products match the selected filters!</p>';
+  }
 }
