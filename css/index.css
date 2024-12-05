@@ -1,0 +1,7 @@
+.product img {
+    height: 15rem;
+    object-fit: contain;
+}
+.space {
+    white-space: pre;
+}
