@@ -54,7 +54,7 @@
     <section class="py-5">
       <div class="container">
         <div class="form-floating mb-3">
-          <input type="search" class="form-control" id="productSearch" placeholder="Product Search">
+          <input disabled type="search" class="form-control" id="productSearch" placeholder="Product Search">
           <label for="productSearch">Product Search</label>
         </div>
         <div class="d-flex mb-3">
@@ -73,35 +73,38 @@
             <div class="form-label">Filter by Category:</div>
             <div id="categoryFilter" class="d-flex flex-wrap">
               <div class="form-check me-3">
-                <input class="form-check-input category-checkbox" type="checkbox" value="TV" id="categoryTV">
+                <input disabled class="form-check-input category-checkbox" type="checkbox" value="TV" id="categoryTV">
                 <label class="form-check-label" for="categoryTV">TV</label>
               </div>
               <div class="form-check me-3">
-                <input class="form-check-input category-checkbox" type="checkbox" value="Phone" id="categoryPhone">
+                <input disabled class="form-check-input category-checkbox" type="checkbox" value="Phone" id="categoryPhone">
                 <label class="form-check-label" for="categoryPhone">Phone</label>
               </div>
               <div class="form-check me-3">
-                <input class="form-check-input category-checkbox" type="checkbox" value="Screen" id="categoryScreen">
+                <input disabled class="form-check-input category-checkbox" type="checkbox" value="Screen" id="categoryScreen">
                 <label class="form-check-label" for="categoryScreen">Screen</label>
               </div>
               <div class="form-check me-3">
-                <input class="form-check-input category-checkbox" type="checkbox" value="Laptop" id="categoryLaptop">
+                <input disabled class="form-check-input category-checkbox" type="checkbox" value="Laptop" id="categoryLaptop">
                 <label class="form-check-label" for="categoryLaptop">Laptop</label>
               </div>
               <div class="form-check me-3">
-                <input class="form-check-input category-checkbox" type="checkbox" value="Electronics" id="categoryElectronics">
+                <input disabled class="form-check-input category-checkbox" type="checkbox" value="Electronics"id="categoryElectronics">
                 <label class="form-check-label" for="categoryElectronics">Electronics</label>
               </div>
             </div>
           </div>
-          <div class="d-flex flex-column align-items-center">
-            <div class="form-label">Filter by Price:</div>
-            <div class="d-flex align-items-center w-100">
-              <span id="minPriceLabel">6000</span>
-              <input disabled type="range" class="form-range mx-2 priceSlider" id="minPrice" min="6000" max="60000" step="500" value="6000">
-              <input disabled type="range" class="form-range mx-2 priceSlider" id="maxPrice" min="6000" max="60000" step="500" value="60000">
-              <span id="maxPriceLabel">60000</span>
+          <div class="d-flex">
+            <span>Filter by Price: Min</span>
+            <div class="d-flex flex-column mx-2">
+              <input disabled type="number" id="minPriceInput" class="form-control mb-2" value="6000" min="6000" max="60000"step="500">
+              <input disabled type="range" class="form-range priceSlider" id="minPrice" min="6000" max="60000"step="500" value="6000">
             </div>
+            <div class="d-flex flex-column mx-2">
+              <input disabled type="number" id="maxPriceInput" class="form-control mb-2" value="60000" min="6000" max="60000"step="500">
+              <input disabled type="range" class="form-range priceSlider" id="maxPrice" min="6000" max="60000"step="500" value="60000">
+            </div>
+            <span>Max</span>
           </div>
         </div>
         <div class="row gy-4" id="displayProduct">
